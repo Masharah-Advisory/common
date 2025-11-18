@@ -1,0 +1,16 @@
+{
+  "authentication_required": "مطلوب مصادقة",
+  "invalid_service_credentials": "بيانات اعتماد الخدمة غير صحيحة",
+  "missing_authentication": "رؤوس المصادقة مفقودة",
+  "missing_authorization_header": "رأس التصريح مفقود",
+  "invalid_authorization_format": "تنسيق رأس التصريح غير صحيح. استخدم: Bearer <token>",
+  "jwt_secret_not_configured": "سر JWT غير مكون",
+  "invalid_or_expired_token": "الرمز المميز غير صحيح أو منتهي الصلاحية",
+  "user_id_not_found": "معرف المستخدم غير موجود. تأكد من تطبيق AuthMiddleware أولاً",
+  "invalid_user_id_format": "تنسيق معرف المستخدم غير صحيح",
+  "invalid_user_id_type": "نوع معرف المستخدم غير صحيح",
+  "failed_to_validate_permissions": "فشل في التحقق من الصلاحيات",
+  "insufficient_permissions": "صلاحيات غير كافية",
+  "invalid_authentication_type": "نوع المصادقة غير صحيح",
+  "missing_service_headers": "رؤوس الخدمة مفقودة"
+}

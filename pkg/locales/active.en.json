@@ -1,0 +1,16 @@
+{
+  "authentication_required": "Authentication required",
+  "invalid_service_credentials": "Invalid service credentials", 
+  "missing_authentication": "Missing authentication headers",
+  "missing_authorization_header": "Missing Authorization header",
+  "invalid_authorization_format": "Invalid Authorization header format. Use: Bearer <token>",
+  "jwt_secret_not_configured": "JWT secret not configured",
+  "invalid_or_expired_token": "Invalid or expired token",
+  "user_id_not_found": "User ID not found. Make sure AuthMiddleware is applied first",
+  "invalid_user_id_format": "Invalid user ID format",
+  "invalid_user_id_type": "Invalid user ID type",
+  "failed_to_validate_permissions": "Failed to validate permissions",
+  "insufficient_permissions": "Insufficient permissions",
+  "invalid_authentication_type": "Invalid authentication type",
+  "missing_service_headers": "Missing service headers"
+}
