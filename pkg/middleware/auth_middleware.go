@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -70,7 +69,6 @@ func AuthMiddleware(jwtSecret ...string) gin.HandlerFunc {
 		// Set user ID in context and header for downstream services
 		c.Set("user_id", claims.UserID)
 		c.Request.Header.Set(utils.XUserIDHeader, strconv.FormatUint(uint64(claims.UserID), 10))
-		fmt.Println("hello123", claims.UserID)
 		c.Next()
 	}
 }
