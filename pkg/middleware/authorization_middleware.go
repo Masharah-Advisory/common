@@ -1,14 +1,12 @@
 package middleware
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
 	"github.com/Masharah-Advisory/common/pkg/httpclient"
 	"github.com/Masharah-Advisory/common/pkg/i18n"
 	"github.com/Masharah-Advisory/common/pkg/response"
-	"github.com/Masharah-Advisory/common/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +18,14 @@ type AccessResponse struct {
 
 type AccessData struct {
 	Allowed bool `json:"allowed"`
+}
+
+// Global service client - should be initialized once in main.go
+var serviceClient *httpclient.ServiceClient
+
+// InitServiceClient initializes the global service client
+func InitServiceClient(client *httpclient.ServiceClient) {
+	serviceClient = client
 }
 
 // RequirePermission validates that user has a specific permission (user-only middleware)
@@ -55,8 +61,7 @@ func RequirePermission(permission string) gin.HandlerFunc {
 		}
 
 		// Call auth service to check access
-		allowed, err := checkUserPermission(uid, permission)
-		fmt.Println(err.Error())
+		allowed, err := checkUserPermission(c, uid, permission)
 		if err != nil {
 			response.InternalError(c, i18n.T(c, "failed_to_validate_permissions"))
 			c.Abort()
@@ -107,7 +112,7 @@ func RequirePermissions(permissions ...string) gin.HandlerFunc {
 
 		// Check all permissions
 		for _, permission := range permissions {
-			allowed, err := checkUserPermission(uid, permission)
+			allowed, err := checkUserPermission(c, uid, permission)
 			if err != nil {
 				response.InternalError(c, i18n.T(c, "failed_to_validate_permissions"))
 				c.Abort()
@@ -125,32 +130,27 @@ func RequirePermissions(permissions ...string) gin.HandlerFunc {
 	}
 }
 
-// checkUserPermission calls auth service to validate user permission
-func checkUserPermission(userID uint, permission string) (bool, error) {
+// checkUserPermission calls auth service to validate user permission using smart client
+func checkUserPermission(c *gin.Context, userID uint, permission string) (bool, error) {
+	if serviceClient == nil {
+		return false, fmt.Errorf("service client not initialized")
+	}
+
 	payload := map[string]interface{}{
 		"user_id":    userID,
 		"permission": permission,
 	}
 
-	headers := map[string]string{
-		utils.XServiceIDHeader:     utils.ServiceID,
-		utils.XServiceSecretHeader: utils.ServiceSecret,
-	}
-
-	resp, err := httpclient.PostJSON(utils.AuthServiceURL+"/api/v1/auth/access", payload, headers)
+	// Use smart client - it will automatically extract headers and detect service
+	resp, err := serviceClient.Post(c, "/auth/access", payload)
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
 
-	var accessResp AccessResponse
-	if err := json.NewDecoder(resp.Body).Decode(&accessResp); err != nil {
+	var accessData AccessData
+	if err := httpclient.DecodeStandardResponse(resp, &accessData); err != nil {
 		return false, err
 	}
 
-	if !accessResp.Success {
-		return false, nil
-	}
-
-	return accessResp.Data.Allowed, nil
+	return accessData.Allowed, nil
 }

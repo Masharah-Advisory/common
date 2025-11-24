@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/Masharah-Advisory/common/pkg/i18n"
@@ -9,12 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ConditionalPermissionMiddleware checks permissions only for user requests,
+// PermissionMiddleware checks permissions only for user requests,
 // allows service requests to bypass permission checks
-func ConditionalPermissionMiddleware(permission string) gin.HandlerFunc {
+func PermissionMiddleware(permission string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authType, exists := c.Get("authType")
-		fmt.Println("Auth Type:", authType)
 		if !exists {
 			response.Unauthorized(c, i18n.T(c, "authentication_required"))
 			c.Abort()
@@ -58,7 +56,7 @@ func ConditionalPermissionMiddleware(permission string) gin.HandlerFunc {
 			}
 
 			// Check permission via auth service
-			allowed, err := checkUserPermission(uid, permission)
+			allowed, err := checkUserPermission(c, uid, permission)
 			if err != nil {
 				response.InternalError(c, i18n.T(c, "failed_to_validate_permissions"))
 				c.Abort()
@@ -80,9 +78,9 @@ func ConditionalPermissionMiddleware(permission string) gin.HandlerFunc {
 	}
 }
 
-// ConditionalPermissions checks multiple permissions only for user requests
+// PermissionAnyMiddleware checks multiple permissions only for user requests
 // For future use when multiple permissions are needed
-func ConditionalPermissions(permissions ...string) gin.HandlerFunc {
+func PermissionAnyMiddleware(permissions ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authType, exists := c.Get("authType")
 		if !exists {
@@ -129,7 +127,7 @@ func ConditionalPermissions(permissions ...string) gin.HandlerFunc {
 
 			// Check all permissions
 			for _, permission := range permissions {
-				allowed, err := checkUserPermission(uid, permission)
+				allowed, err := checkUserPermission(c, uid, permission)
 				if err != nil {
 					response.InternalError(c, i18n.T(c, "failed_to_validate_permissions"))
 					c.Abort()
