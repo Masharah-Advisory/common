@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Masharah-Advisory/common/pkg/i18n"
-	"github.com/Masharah-Advisory/common/pkg/response"
-	"github.com/Masharah-Advisory/common/pkg/utils"
+	"github.com/Masharah-Advisory/common/i18n"
+	"github.com/Masharah-Advisory/common/response"
+	"github.com/Masharah-Advisory/common/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )

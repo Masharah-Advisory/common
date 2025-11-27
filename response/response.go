@@ -3,7 +3,7 @@ package response
 import (
 	"net/http"
 
-	"github.com/Masharah-Advisory/common/pkg/i18n"
+	"github.com/Masharah-Advisory/common/i18n"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )

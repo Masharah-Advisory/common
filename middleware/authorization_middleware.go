@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/Masharah-Advisory/common/pkg/httpclient"
-	"github.com/Masharah-Advisory/common/pkg/i18n"
-	"github.com/Masharah-Advisory/common/pkg/response"
+	"github.com/Masharah-Advisory/common/httpclient"
+	"github.com/Masharah-Advisory/common/i18n"
+	"github.com/Masharah-Advisory/common/response"
 	"github.com/gin-gonic/gin"
 )
 

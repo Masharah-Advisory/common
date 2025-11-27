@@ -3,8 +3,8 @@ package middleware
 import (
 	"strconv"
 
-	"github.com/Masharah-Advisory/common/pkg/i18n"
-	"github.com/Masharah-Advisory/common/pkg/response"
+	"github.com/Masharah-Advisory/common/i18n"
+	"github.com/Masharah-Advisory/common/response"
 	"github.com/gin-gonic/gin"
 )
 
