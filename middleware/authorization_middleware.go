@@ -142,7 +142,7 @@ func checkUserPermission(c *gin.Context, userID uint, permission string) (bool, 
 	}
 
 	// Use smart client - it will automatically extract headers and detect service
-	resp, err := serviceClient.Post(c, "/auth/access", payload)
+	resp, err := serviceClient.Post(c, "/api/v1/auth/access", payload)
 	if err != nil {
 		return false, err
 	}
