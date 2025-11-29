@@ -82,6 +82,30 @@ func OK[T any](c *gin.Context, data T, message ...string) {
 	})
 }
 
+// OKMessage sends a 200 OK response with just a message
+func OKMessage(c *gin.Context, message ...string) {
+	msg := "Success"
+	if len(message) > 0 {
+		msg = message[0]
+	}
+	c.JSON(http.StatusOK, ApiResponse[any]{
+		Success: true,
+		Message: msg,
+	})
+}
+
+func Accepted[T any](c *gin.Context, data T, message ...string) {
+	msg := "Request accepted successfully"
+	if len(message) > 0 {
+		msg = message[0]
+	}
+	c.JSON(http.StatusAccepted, ApiResponse[T]{
+		Success: true,
+		Data:    &data,
+		Message: msg,
+	})
+}
+
 // Created sends a 201 Created response
 func Created[T any](c *gin.Context, data T, message ...string) {
 	msg := "Resource created successfully"
