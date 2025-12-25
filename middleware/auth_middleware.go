@@ -20,11 +20,11 @@ type AuthResponse struct {
 }
 
 type AuthData struct {
-	UserID uint `json:"user_id"`
+	UserID uint64 `json:"user_id"`
 }
 
 type Claims struct {
-	UserID uint `json:"user_id"`
+	UserID uint64 `json:"user_id"`
 	jwt.RegisteredClaims
 }
 

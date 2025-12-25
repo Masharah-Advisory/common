@@ -64,7 +64,7 @@ func SmartAuthMiddleware(jwtSecret ...string) gin.HandlerFunc {
 
 			// Set user ID in context and header for downstream services
 			c.Set("user_id", claims.UserID)
-			c.Request.Header.Set(utils.XUserIDHeader, strconv.FormatUint(uint64(claims.UserID), 10))
+			c.Request.Header.Set(utils.XUserIDHeader, strconv.FormatUint(claims.UserID, 10))
 			c.Set("authType", "user")
 			c.Next()
 			return

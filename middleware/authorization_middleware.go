@@ -40,20 +40,22 @@ func RequirePermission(permission string) gin.HandlerFunc {
 		}
 
 		// Convert userID to uint
-		var uid uint
+		var uid uint64
 		switch v := userID.(type) {
 		case uint:
+			uid = uint64(v)
+		case uint64:
 			uid = v
 		case int:
-			uid = uint(v)
+			uid = uint64(v)
 		case string:
-			parsed, err := strconv.ParseUint(v, 10, 32)
+			parsed, err := strconv.ParseUint(v, 10, 64)
 			if err != nil {
 				response.Unauthorized(c, i18n.T(c, "invalid_user_id_format"))
 				c.Abort()
 				return
 			}
-			uid = uint(parsed)
+			uid = uint64(parsed)
 		default:
 			response.Unauthorized(c, i18n.T(c, "invalid_user_id_type"))
 			c.Abort()
@@ -90,20 +92,22 @@ func RequirePermissions(permissions ...string) gin.HandlerFunc {
 		}
 
 		// Convert userID to uint
-		var uid uint
+		var uid uint64
 		switch v := userID.(type) {
 		case uint:
+			uid = uint64(v)
+		case uint64:
 			uid = v
 		case int:
-			uid = uint(v)
+			uid = uint64(v)
 		case string:
-			parsed, err := strconv.ParseUint(v, 10, 32)
+			parsed, err := strconv.ParseUint(v, 10, 64)
 			if err != nil {
 				response.Unauthorized(c, i18n.T(c, "invalid_user_id_format"))
 				c.Abort()
 				return
 			}
-			uid = uint(parsed)
+			uid = uint64(parsed)
 		default:
 			response.Unauthorized(c, i18n.T(c, "invalid_user_id_type"))
 			c.Abort()
@@ -131,12 +135,12 @@ func RequirePermissions(permissions ...string) gin.HandlerFunc {
 }
 
 // checkUserPermission calls auth service to validate user permission using smart client
-func checkUserPermission(c *gin.Context, userID uint, permission string) (bool, error) {
+func checkUserPermission(c *gin.Context, userID uint64, permission string) (bool, error) {
 	if serviceClient == nil {
 		return false, fmt.Errorf("service client not initialized")
 	}
 
-	payload := map[string]interface{}{
+	payload := gin.H{
 		"user_id":    userID,
 		"permission": permission,
 	}

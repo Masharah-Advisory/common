@@ -35,20 +35,22 @@ func PermissionMiddleware(permission string) gin.HandlerFunc {
 			}
 
 			// Convert userID to uint
-			var uid uint
+			var uid uint64
 			switch v := userID.(type) {
-			case uint:
+			case uint64:
 				uid = v
+			case uint:
+				uid = uint64(v)
 			case int:
-				uid = uint(v)
+				uid = uint64(v)
 			case string:
-				parsed, err := strconv.ParseUint(v, 10, 32)
+				parsed, err := strconv.ParseUint(v, 10, 64)
 				if err != nil {
 					response.Unauthorized(c, i18n.T(c, "invalid_user_id_format"))
 					c.Abort()
 					return
 				}
-				uid = uint(parsed)
+				uid = uint64(parsed)
 			default:
 				response.Unauthorized(c, i18n.T(c, "invalid_user_id_type"))
 				c.Abort()
@@ -105,20 +107,22 @@ func PermissionAnyMiddleware(permissions ...string) gin.HandlerFunc {
 			}
 
 			// Convert userID to uint
-			var uid uint
+			var uid uint64
 			switch v := userID.(type) {
-			case uint:
+			case uint64:
 				uid = v
+			case uint:
+				uid = uint64(v)
 			case int:
-				uid = uint(v)
+				uid = uint64(v)
 			case string:
-				parsed, err := strconv.ParseUint(v, 10, 32)
+				parsed, err := strconv.ParseUint(v, 10, 64)
 				if err != nil {
 					response.Unauthorized(c, i18n.T(c, "invalid_user_id_format"))
 					c.Abort()
 					return
 				}
-				uid = uint(parsed)
+				uid = uint64(parsed)
 			default:
 				response.Unauthorized(c, i18n.T(c, "invalid_user_id_type"))
 				c.Abort()
