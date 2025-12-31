@@ -1,6 +1,8 @@
 package response
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/Masharah-Advisory/common/i18n"
@@ -41,7 +43,7 @@ func Errs(errors map[string]string) []ErrorItem {
 	return items
 }
 
-// ValidationErrors converts validator.ValidationErrors to localized error items
+// ValidationErrors converts various error types to localized error items
 func ValidationErrors(c *gin.Context, errs validator.ValidationErrors) []ErrorItem {
 	var items []ErrorItem
 
@@ -65,6 +67,49 @@ func ValidationErrors(c *gin.Context, errs validator.ValidationErrors) []ErrorIt
 	}
 
 	return items
+}
+
+// ProcessBindingError intelligently handles different binding error types
+func ProcessBindingError(c *gin.Context, err error) []ErrorItem {
+	// Handle validator.ValidationErrors
+	var validationErrors validator.ValidationErrors
+	if errors.As(err, &validationErrors) {
+		return ValidationErrors(c, validationErrors)
+	}
+
+	// Handle JSON type mismatch errors (e.g., passing array instead of string)
+	var unmarshalTypeErr *json.UnmarshalTypeError
+	if errors.As(err, &unmarshalTypeErr) {
+		key := "validation.type"
+		data := gin.H{
+			"Field": unmarshalTypeErr.Field,
+			"Type":  unmarshalTypeErr.Type.String(),
+		}
+		localizedMessage := i18n.T(c, key, data)
+		return []ErrorItem{{
+			Key:   unmarshalTypeErr.Field,
+			Value: localizedMessage,
+		}}
+	}
+
+	// Handle JSON syntax errors
+	var syntaxErr *json.SyntaxError
+	if errors.As(err, &syntaxErr) {
+		key := "validation.invalid_json"
+		localizedMessage := i18n.T(c, key, gin.H{})
+		return []ErrorItem{{
+			Key:   "body",
+			Value: localizedMessage,
+		}}
+	}
+
+	// Default fallback for unknown errors
+	key := "validation.invalid"
+	localizedMessage := i18n.T(c, key, gin.H{})
+	return []ErrorItem{{
+		Key:   "general",
+		Value: localizedMessage,
+	}}
 }
 
 // Simple success response functions (most common use cases)
